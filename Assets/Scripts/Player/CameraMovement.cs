@@ -6,6 +6,7 @@ public class CameraMovement : MonoBehaviour
 {
     public float mouseSensitivity = 100f;
     public Transform playerBody;
+    public Transform bodyCamera;
 
     private float xRotation = 0f;
 
@@ -27,6 +28,9 @@ public class CameraMovement : MonoBehaviour
 
         // Apply the rotation to the camera
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        // Apply the rotation for looking up and down (clamped) for the body cam as well
+        bodyCamera.localRotation = transform.localRotation;
 
         // Rotate the player body left and right
         playerBody.Rotate(Vector3.up * mouseX);
