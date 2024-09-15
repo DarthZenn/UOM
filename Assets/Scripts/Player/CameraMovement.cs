@@ -6,9 +6,11 @@ public class CameraMovement : MonoBehaviour
 {
     public float mouseSensitivity = 100f;
     public Transform playerBody;
-    public Transform bodyCamera;
+    public Transform headPositionTarget; // Empty GameObject in the character's head bone for camera position
 
-    private float xRotation = 0f;
+    private float xRotation = 0f; // To store the camera's X rotation (for vertical rotation)
+    private float yRotation = 0f; // To store the camera's Y rotation (for sideways rotation)
+    private readonly float bodyRotationThreshold = 30f; // Threshold for when the body starts rotating
 
     void Start()
     {
@@ -26,13 +28,34 @@ public class CameraMovement : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Prevent over-rotation
 
-        // Apply the rotation to the camera
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        // Apply the rotation to the camera on the X-axis (up and down) and the Y-Axis (right and left)
+        transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
-        // Apply the rotation for looking up and down (clamped) for the body cam as well
-        bodyCamera.localRotation = transform.localRotation;
+        // Update the Y-axis rotation for looking sideways
+        yRotation += mouseX;
 
-        // Rotate the player body left and right
-        playerBody.Rotate(Vector3.up * mouseX);
+        // Clamp camera sideways rotation between -30 and 30 degrees
+        if (Mathf.Abs(yRotation) > bodyRotationThreshold)
+        {
+            // Rotate the player body once the camera's sideways rotation exceeds the threshold
+            float bodyRotation = yRotation - (Mathf.Sign(yRotation) * bodyRotationThreshold);
+            playerBody.Rotate(Vector3.up * bodyRotation);
+
+            // Reset yRotation to threshold value after rotating the body
+            yRotation = Mathf.Sign(yRotation) * bodyRotationThreshold;
+        }
+
+        // Note: yRotation is now clamped within the threshold, but when you rotate past 30 degrees, 
+        // the body rotates and yRotation resets to stay within that limit.
+
+        // Update the camera's position to follow the empty GameObject in the head bone
+        if (headPositionTarget != null)
+        {
+            transform.position = headPositionTarget.position;
+        }
+        else
+        {
+            Debug.LogError("Head position target is not set!");
+        }
     }
 }
