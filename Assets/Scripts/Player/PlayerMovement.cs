@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
         bool isRunning = horizontal != 0 || vertical != 0;
 
         // Check if the player is sprinting and has enough stamina
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && playerStats.currentStamina > 0;
+        bool isSprinting = Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift) && playerStats.currentStamina > 0;
 
         // Set movement speed based on sprinting status
         float currentSpeed = isSprinting ? sprintSpeed : isRunning ? runSpeed : 0;

@@ -49,6 +49,13 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    // Function to increase health
+    public void RestoreHealth(float amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+    }
+
     // Function to use stamina
     public void UseStamina(float amount)
     {
